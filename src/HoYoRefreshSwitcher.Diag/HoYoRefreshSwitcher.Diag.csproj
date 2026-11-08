@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <!-- Console diagnostic tool. Shares the display and process code with the tray app. -->
   <PropertyGroup>
@@ -12,7 +12,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <ApplicationIcon>..\..\assets\app.ico</ApplicationIcon>
     <ApplicationManifest>..\HoYoRefreshSwitcher\app.manifest</ApplicationManifest>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Product>HoYo Refresh Rate Switcher Diagnostics</Product>
     <Copyright>MIT License</Copyright>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>

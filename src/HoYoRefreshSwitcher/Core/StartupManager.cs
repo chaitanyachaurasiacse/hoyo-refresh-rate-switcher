@@ -41,14 +41,38 @@ namespace HoYoRefreshSwitcher.Core
                     key.DeleteValue(ValueName, false);
             }
 
-            // The user explicitly asked for this, so clear a previous "disabled" flag from Startup apps.
-            using (var approved = Registry.CurrentUser.OpenSubKey(ApprovedKey, true))
+            // Windows 11 only launches Run entries that are approved in Startup apps. A missing approval
+            // value is NOT treated as enabled (observed on build 26200: the entry was skipped at login),
+            // so write the same "enabled" value Task Manager writes. The user explicitly asked for this,
+            // so it also replaces an earlier "disabled" flag.
+            using (var approved = Registry.CurrentUser.CreateSubKey(ApprovedKey))
             {
-                if (approved?.GetValue(ValueName) != null)
+                if (enabled)
+                    approved.SetValue(ValueName, EnabledFlag, RegistryValueKind.Binary);
+                else if (approved.GetValue(ValueName) != null)
                     approved.DeleteValue(ValueName, false);
             }
 
             Logger.Info(enabled ? "Start with Windows enabled: " + ExpectedCommand : "Start with Windows disabled.");
+        }
+
+        /// <summary>StartupApproved value meaning "enabled": 0x02 followed by 11 zero bytes (as written by Task Manager).</summary>
+        private static byte[] EnabledFlag => new byte[] { 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+        /// <summary>
+        /// Adds the "enabled" approval if there is none. An existing value is left alone, so a "disabled"
+        /// choice made in Task Manager / Settings is respected.
+        /// </summary>
+        private static void EnsureApproved()
+        {
+            using (var approved = Registry.CurrentUser.CreateSubKey(ApprovedKey))
+            {
+                if (approved.GetValue(ValueName) == null)
+                {
+                    approved.SetValue(ValueName, EnabledFlag, RegistryValueKind.Binary);
+                    Logger.Info("Start with Windows: added missing Startup apps approval.");
+                }
+            }
         }
 
         /// <summary>Keeps the registry in line with the setting, and fixes the path if the exe was moved.</summary>
@@ -73,6 +97,9 @@ namespace HoYoRefreshSwitcher.Core
                         key.SetValue(ValueName, ExpectedCommand, RegistryValueKind.String);
                     Logger.Info("Start with Windows entry updated: " + ExpectedCommand);
                 }
+
+                // Repairs installs made by v1.0.0, which deleted the approval value.
+                EnsureApproved();
             }
             catch (Exception ex)
             {

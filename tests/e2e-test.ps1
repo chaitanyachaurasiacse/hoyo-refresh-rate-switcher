@@ -239,6 +239,8 @@ try {
     Toggle $w 'Start with Windows'
     $val = (Get-ItemProperty $runKey -Name HoYoRefreshSwitcher -ErrorAction SilentlyContinue).HoYoRefreshSwitcher
     Result ($val -like "*HoYoRefreshSwitcher.exe*--minimized") '10. "Start with Windows" writes HKCU Run entry (no admin, no task)' "$val"
+    $approved = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run' -Name HoYoRefreshSwitcher -ErrorAction SilentlyContinue).HoYoRefreshSwitcher
+    Result ($approved -and $approved[0] -eq 2) '10. Entry is marked enabled in Startup apps (Windows skips unapproved entries at login)' "$(if ($approved) { '{0:X2}' -f $approved[0] } else { 'missing' })"
     Toggle $w 'Start with Windows'
     $val = (Get-ItemProperty $runKey -Name HoYoRefreshSwitcher -ErrorAction SilentlyContinue).HoYoRefreshSwitcher
     Result (-not $val) '10. Unchecking removes the Run entry'
