@@ -28,4 +28,5 @@ DIAGNOSTICS
 UNINSTALL
   Untick "Start with Windows", Exit, delete this folder (and optionally the two folders above).
 
-Full documentation, source code and troubleshooting: see the project's GitHub page.
+Full documentation, source code and troubleshooting:
+  https://github.com/chaitanyachaurasiacse/hoyo-refresh-rate-switcher

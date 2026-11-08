@@ -18,7 +18,7 @@ It was made for laptops whose panel flickers with some HoYoverse games at high r
 
 ## Install
 
-1. Download `HoYoRefreshSwitcher-vX.Y.Z.zip` from the Releases page, or [build it yourself](#build-from-source).
+1. Download `HoYoRefreshSwitcher-vX.Y.Z.zip` from the [Releases page](https://github.com/chaitanyachaurasiacse/hoyo-refresh-rate-switcher/releases/latest), or [build it yourself](#build-from-source).
 2. Extract it to a permanent folder, for example `%LOCALAPPDATA%\Programs\HoYoRefreshSwitcher`.
    Don't run it from inside the zip or from Downloads if you plan to enable *Start with Windows*.
 3. Run `HoYoRefreshSwitcher.exe`.
@@ -97,8 +97,8 @@ Run `HoYoRefreshDiag info > report.txt` and attach the file when reporting a pro
 You need the .NET SDK 8 or newer to build (`winget install Microsoft.DotNet.SDK.8`). Users don't need it to run the app.
 
 ```
-git clone <this repo>
-cd HoYoRefreshSwitcher
+git clone https://github.com/chaitanyachaurasiacse/hoyo-refresh-rate-switcher.git
+cd hoyo-refresh-rate-switcher
 powershell -ExecutionPolicy Bypass -File build.ps1
 ```
 
