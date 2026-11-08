@@ -9,6 +9,10 @@ namespace HoYoRefreshSwitcher.Core
     /// This is the standard mechanism Windows' own "Startup apps" page manages; it needs no admin
     /// rights and no scheduled task, and the app starts inside the user's interactive session,
     /// which is required for changing display modes.
+    ///
+    /// The registry entry itself is the source of truth for whether the option is on. The settings
+    /// file only mirrors it, and app start-up never deletes the entry because the file disagrees.
+    /// Only the user's own toggle (in the app, or in Task Manager / Settings > Startup apps) turns it off.
     /// </summary>
     public static class StartupManager
     {
@@ -41,10 +45,8 @@ namespace HoYoRefreshSwitcher.Core
                     key.DeleteValue(ValueName, false);
             }
 
-            // Windows 11 only launches Run entries that are approved in Startup apps. A missing approval
-            // value is NOT treated as enabled (observed on build 26200: the entry was skipped at login),
-            // so write the same "enabled" value Task Manager writes. The user explicitly asked for this,
-            // so it also replaces an earlier "disabled" flag.
+            // Mark the entry as enabled in Startup apps, exactly as Task Manager does when you enable an
+            // app there. The user explicitly asked for this, so it also clears an earlier "disabled" flag.
             using (var approved = Registry.CurrentUser.CreateSubKey(ApprovedKey))
             {
                 if (enabled)
@@ -60,51 +62,41 @@ namespace HoYoRefreshSwitcher.Core
         private static byte[] EnabledFlag => new byte[] { 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
         /// <summary>
-        /// Adds the "enabled" approval if there is none. An existing value is left alone, so a "disabled"
-        /// choice made in Task Manager / Settings is respected.
+        /// Called at app start. Fixes the entry's path if the exe was moved and returns whether the
+        /// option is on. It never creates or deletes the entry, so a stale settings file cannot undo
+        /// the user's choice.
         /// </summary>
-        private static void EnsureApproved()
-        {
-            using (var approved = Registry.CurrentUser.CreateSubKey(ApprovedKey))
-            {
-                if (approved.GetValue(ValueName) == null)
-                {
-                    approved.SetValue(ValueName, EnabledFlag, RegistryValueKind.Binary);
-                    Logger.Info("Start with Windows: added missing Startup apps approval.");
-                }
-            }
-        }
-
-        /// <summary>Keeps the registry in line with the setting, and fixes the path if the exe was moved.</summary>
-        public static void Sync(bool shouldBeEnabled)
+        public static bool Sync()
         {
             try
             {
-                if (!shouldBeEnabled)
-                {
-                    if (IsEnabled())
-                        SetEnabled(false);
-                    return;
-                }
-
                 string current;
                 using (var key = Registry.CurrentUser.OpenSubKey(RunKey, false))
                     current = key?.GetValue(ValueName) as string;
+
+                if (string.IsNullOrEmpty(current))
+                    return false;
 
                 if (!string.Equals(current, ExpectedCommand, StringComparison.OrdinalIgnoreCase))
                 {
                     using (var key = Registry.CurrentUser.CreateSubKey(RunKey))
                         key.SetValue(ValueName, ExpectedCommand, RegistryValueKind.String);
-                    Logger.Info("Start with Windows entry updated: " + ExpectedCommand);
+                    Logger.Info("Start with Windows entry updated to the new location: " + ExpectedCommand);
                 }
 
-                // Repairs installs made by v1.0.0, which deleted the approval value.
-                EnsureApproved();
+                return true;
             }
             catch (Exception ex)
             {
-                Logger.Error("Could not update the Start with Windows entry.", ex);
+                Logger.Error("Could not check the Start with Windows entry.", ex);
+                return IsEnabledSafe();
             }
+        }
+
+        private static bool IsEnabledSafe()
+        {
+            try { return IsEnabled(); }
+            catch { return false; }
         }
     }
 }

@@ -40,7 +40,7 @@ The last switch failed. Hover over the icon or open the window to see the error,
 ### "Start with Windows" is ticked but the app doesn't start
 
 - Check *Task Manager → Startup apps*. If **HoYoRefreshSwitcher** is *Disabled* there, Windows ignores the entry. The checkbox then reads "(disabled in Task Manager)". Re-ticking the checkbox in the app re-enables it.
-- **v1.0.0 only:** the entry was written without a Startup apps approval, and Windows 11 skips such entries at login. Update to v1.0.1 or newer and start the app once by hand; it repairs the entry.
+- Was the app started from inside another sandboxed app (for example a terminal inside a Microsoft Store / MSIX app)? Windows redirects such programs' registry writes into that app's private storage, so the startup entry never reaches the real registry. Start the app from File Explorer or the Start menu and tick the option again.
 - If you moved or renamed the folder, open the exe once from its new location; the startup entry is updated automatically.
 - Windows starts Run-key apps a few seconds after the desktop appears. That's normal.
 

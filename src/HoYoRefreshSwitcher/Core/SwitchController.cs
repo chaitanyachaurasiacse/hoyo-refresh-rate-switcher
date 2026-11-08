@@ -138,9 +138,10 @@ namespace HoYoRefreshSwitcher.Core
 
         public void SetStartWithWindows(bool enabled)
         {
+            // Change the task first: if Task Scheduler refuses, the setting is not saved as changed.
+            StartupManager.SetEnabled(enabled);
             _settings.StartWithWindows = enabled;
             _settings.Save();
-            StartupManager.SetEnabled(enabled);
             RaiseStateChanged();
         }
 
@@ -152,7 +153,7 @@ namespace HoYoRefreshSwitcher.Core
             _settings.Save();
             _gameNames = _settings.NormalizedGameNames();
             _timer.Interval = _settings.PollIntervalSeconds * 1000;
-            StartupManager.Sync(_settings.StartWithWindows);
+            _settings.StartWithWindows = StartupManager.IsEnabled(); // the registry entry is the source of truth
             Logger.Info($"Settings saved. gaming={_settings.GamingRefreshRate} Hz, desktop={_settings.DesktopRefreshRate} Hz, " +
                         $"interval={_settings.PollIntervalSeconds} s, games=[{string.Join(", ", _settings.GameProcesses)}]");
 

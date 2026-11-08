@@ -32,7 +32,13 @@ namespace HoYoRefreshSwitcher.UI
             _ = _invoker.Handle;
 
             var settings = AppSettings.Load();
-            StartupManager.Sync(settings.StartWithWindows);
+            // The Run entry decides whether "Start with Windows" is on; the settings file just mirrors it.
+            bool startup = StartupManager.Sync();
+            if (settings.StartWithWindows != startup)
+            {
+                settings.StartWithWindows = startup;
+                settings.Save();
+            }
 
             Controller = new SwitchController(settings);
             Controller.StateChanged += (s, e) => UpdateTray();

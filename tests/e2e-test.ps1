@@ -151,6 +151,11 @@ function Exit-App {
 # ---------------------------------------------------------------------------------------------
 if ((Get-AppProcs).Count -gt 0) { throw 'HoYoRefreshSwitcher is already running. Exit it first (tray icon > Exit).' }
 if (Test-Path $settingsFile) { Copy-Item $settingsFile $backupFile -Force }
+# The test turns "Start with Windows" on and off; keep the user's real entry to restore afterwards.
+$runKeyPath = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
+$approvedKeyPath = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run'
+$savedRun = (Get-ItemProperty $runKeyPath -Name HoYoRefreshSwitcher -ErrorAction SilentlyContinue).HoYoRefreshSwitcher
+$savedApproved = (Get-ItemProperty $approvedKeyPath -Name HoYoRefreshSwitcher -ErrorAction SilentlyContinue).HoYoRefreshSwitcher
 $realRunning = @(Get-Process -Name $realNames -ErrorAction SilentlyContinue)
 $startRate = (Get-Rate).Current
 Write-Host "Display starts at $startRate Hz. Real games running: $(if ($realRunning) { ($realRunning.Name | Sort-Object -Unique) -join ', ' } else { 'none' })"
@@ -240,7 +245,15 @@ try {
     $val = (Get-ItemProperty $runKey -Name HoYoRefreshSwitcher -ErrorAction SilentlyContinue).HoYoRefreshSwitcher
     Result ($val -like "*HoYoRefreshSwitcher.exe*--minimized") '10. "Start with Windows" writes HKCU Run entry (no admin, no task)' "$val"
     $approved = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run' -Name HoYoRefreshSwitcher -ErrorAction SilentlyContinue).HoYoRefreshSwitcher
-    Result ($approved -and $approved[0] -eq 2) '10. Entry is marked enabled in Startup apps (Windows skips unapproved entries at login)' "$(if ($approved) { '{0:X2}' -f $approved[0] } else { 'missing' })"
+    Result ($approved -and $approved[0] -eq 2) '10. Entry is marked enabled in Startup apps (as Task Manager does)' "$(if ($approved) { '{0:X2}' -f $approved[0] } else { 'missing' })"
+
+    # A restart of the app with a settings file saying "off" must NOT remove the entry.
+    Exit-App
+    Write-Settings ($names.Values | ForEach-Object { "$_.exe" })   # startWithWindows = false in the file
+    Start-App; $w = Get-Window
+    $val = (Get-ItemProperty $runKey -Name HoYoRefreshSwitcher -ErrorAction SilentlyContinue).HoYoRefreshSwitcher
+    Result ([bool]$val) '10. App start with a stale settings file keeps the startup entry (registry is the source of truth)'
+    Result ((Get-SavedSettings).startWithWindows -eq $true) '10. ...and the settings file is corrected to match'
     Toggle $w 'Start with Windows'
     $val = (Get-ItemProperty $runKey -Name HoYoRefreshSwitcher -ErrorAction SilentlyContinue).HoYoRefreshSwitcher
     Result (-not $val) '10. Unchecking removes the Run entry'
@@ -271,6 +284,10 @@ finally {
     foreach ($n in @($script:fakes.Keys)) { Stop-Fake $n }
     Get-AppProcs | ForEach-Object { Stop-Process -Id $_.Id -Force }
     if (Test-Path $backupFile) { Move-Item $backupFile $settingsFile -Force } elseif (Test-Path $settingsFile) { Remove-Item $settingsFile }
+    Remove-ItemProperty $runKeyPath -Name HoYoRefreshSwitcher -ErrorAction SilentlyContinue
+    Remove-ItemProperty $approvedKeyPath -Name HoYoRefreshSwitcher -ErrorAction SilentlyContinue
+    if ($savedRun) { New-ItemProperty $runKeyPath -Name HoYoRefreshSwitcher -Value $savedRun -PropertyType String -Force | Out-Null }
+    if ($savedApproved) { New-ItemProperty $approvedKeyPath -Name HoYoRefreshSwitcher -Value $savedApproved -PropertyType Binary -Force | Out-Null }
     Remove-Item $fakeDir -Recurse -Force -ErrorAction SilentlyContinue
     $stillReal = @(Get-Process -Name $realNames -ErrorAction SilentlyContinue)
     $final = if ($stillReal.Count -gt 0) { 60 } else { 144 }

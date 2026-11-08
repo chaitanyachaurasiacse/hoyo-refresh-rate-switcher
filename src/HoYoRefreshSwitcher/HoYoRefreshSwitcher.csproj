@@ -15,7 +15,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <ApplicationIcon>..\..\assets\app.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Product>HoYo Refresh Rate Switcher</Product>
     <Description>Switches the laptop display to 60 Hz while HoYoverse games run, and back to 144 Hz afterwards.</Description>
     <Copyright>MIT License</Copyright>
