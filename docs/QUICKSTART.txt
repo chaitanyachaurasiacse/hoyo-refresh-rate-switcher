@@ -1,0 +1,31 @@
+HoYo Refresh Rate Switcher
+==========================
+
+Switches the laptop display to 60 Hz while Genshin Impact, Honkai: Star Rail or
+Zenless Zone Zero is running, and back to 144 Hz when the last one closes.
+
+INSTALL
+  1. Extract this folder somewhere permanent, e.g.
+     %LOCALAPPDATA%\Programs\HoYoRefreshSwitcher
+  2. Run HoYoRefreshSwitcher.exe  (no installer, no admin rights, nothing else to install)
+     If SmartScreen warns: More info -> Run anyway (the exe is not code-signed).
+  3. Tick "Start with Windows" if you want it to start automatically.
+
+USE
+  Tray icon left-click   : open the window
+  Tray icon right-click  : auto switching on/off, switch 60/144 Hz, start with Windows, exit
+  Icon colour            : blue = desktop rate, amber = gaming rate, grey = auto off, red = error
+  Closing the window keeps the app running in the tray. Use Exit to quit.
+
+FILES
+  Settings : %APPDATA%\HoYoRefreshSwitcher\settings.json
+  Log      : %LOCALAPPDATA%\HoYoRefreshSwitcher\logs\app.log
+
+DIAGNOSTICS
+  HoYoRefreshDiag info     displays, available rates, running games
+  HoYoRefreshDiag test     switching test (the screen will flash a few times)
+
+UNINSTALL
+  Untick "Start with Windows", Exit, delete this folder (and optionally the two folders above).
+
+Full documentation, source code and troubleshooting: see the project's GitHub page.

@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{864FB18F-5F61-479E-88E9-5CD3588E41BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoYoRefreshSwitcher.Diag", "src\HoYoRefreshSwitcher.Diag\HoYoRefreshSwitcher.Diag.csproj", "{8E7B02BD-48C4-4AA8-B532-F973655A68F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoYoRefreshSwitcher", "src\HoYoRefreshSwitcher\HoYoRefreshSwitcher.csproj", "{35736739-0482-4BAA-A6E5-433DAF20E031}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8E7B02BD-48C4-4AA8-B532-F973655A68F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E7B02BD-48C4-4AA8-B532-F973655A68F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E7B02BD-48C4-4AA8-B532-F973655A68F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E7B02BD-48C4-4AA8-B532-F973655A68F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35736739-0482-4BAA-A6E5-433DAF20E031}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35736739-0482-4BAA-A6E5-433DAF20E031}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35736739-0482-4BAA-A6E5-433DAF20E031}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35736739-0482-4BAA-A6E5-433DAF20E031}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8E7B02BD-48C4-4AA8-B532-F973655A68F2} = {864FB18F-5F61-479E-88E9-5CD3588E41BD}
+		{35736739-0482-4BAA-A6E5-433DAF20E031} = {864FB18F-5F61-479E-88E9-5CD3588E41BD}
+	EndGlobalSection
+EndGlobal

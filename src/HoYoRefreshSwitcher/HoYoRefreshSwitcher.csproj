@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Targets .NET Framework 4.8, which is built into Windows 10 (1903+) and Windows 11,
+    so the exe runs without installing any runtime. Built with the modern .NET SDK.
+  -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AssemblyName>HoYoRefreshSwitcher</AssemblyName>
+    <RootNamespace>HoYoRefreshSwitcher</RootNamespace>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <ApplicationIcon>..\..\assets\app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Version>1.0.0</Version>
+    <Product>HoYo Refresh Rate Switcher</Product>
+    <Description>Switches the laptop display to 60 Hz while HoYoverse games run, and back to 144 Hz afterwards.</Description>
+    <Copyright>MIT License</Copyright>
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+  </ItemGroup>
+
+</Project>
